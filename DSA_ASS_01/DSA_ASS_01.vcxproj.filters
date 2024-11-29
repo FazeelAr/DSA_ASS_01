@@ -21,5 +21,13 @@
     <ClCompile Include="ExpEval.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="BinarySearch.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="SLList.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

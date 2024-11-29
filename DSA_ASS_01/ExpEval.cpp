@@ -25,37 +25,245 @@ bool validateExpression(string expression, string notation);
 string infixToPostfix(string infix);
 string infixToPrefix(string infix);
 string determineExpressionType(string expression);
-string reverseExpression(string expression);
-bool isOperator(char op);
-bool isOperand(char op);
 //(Returns "Arithmetic", "Logical", or "Mixed")
+string reverseExpression(string expression);
+long long int conToInt(string s);
+bool isOperator(char op);
+bool isLogicalOp(char op);
+bool isOperand(char op);
+int calcPower(int base, int exp);
 int main()
 {
+	
 	try
 	{
-		string exp{ "a+b+c-d*r" };
-		cout << "initial Expression: " << exp << '\n';
-		string post = infixToPostfix(exp + "-");
-		cout << validateExpression(post, "postfix");
+		string exp;
+		getline(cin, exp);
+		cout << evaluateExpression(exp);
+		return 0;
+		int choice;
+		do
+		{
+			cout << "\n\n\tExpressions: ";
+			cout << "\nEnter 1 to convert from infix to postfix: ";
+			cout << "\nEnter 2 to convert from infix to prefix: ";
+			cout << "\nEnter 3 to convert from prefix to postfix: ";
+			cout << "\nEnter 4 to convert from postfix to prefix: ";
+			cout << "\nEnter 5 to check the validity of the expression";
+			cout << "\nEnter 6 to check type of expression: ";
+			cout << "\nEnter choice: ";
+			cin >> choice;
+			if (choice <= 0 || choice > 7) 
+			{
+				break;
+			}
+			string exp;
+			cin.ignore();
+			cout << "Enter expression: ";
+			getline(cin, exp);
+			cout << "\nInitial Expression: " << exp;
+			if (choice == 1)
+			{
+				cout << "\nPostfix Expression: " << infixToPostfix(exp);
+			}
+			else if (choice == 2)
+			{
+				cout << "\nPrefix Expression: " << infixToPrefix(exp);
+			}
+			else if (choice == 3)
+			{
+				cout << "\nPostfix Expression: " << prefixToPostfix(exp);
+			}
+			else if (choice == 4)
+			{
+				cout << "\nPrefix Expression: " << postfixToPrefix(exp);
+			}
+			else if (choice == 5)
+			{
+				cout << "\nEnter 1 for Prefix notation: ";
+				cout << "\nEnter 2 for Postfix notation: ";
+				int notation;
+				cin >> notation;
+				if (notation == 1)
+				{
+					cout << "\n" << boolalpha << validateExpression(exp, "prefix");
+				}
+				else if (notation == 2)
+				{
+					cout << "\n" << boolalpha << validateExpression(exp, "postfix");
+				}
+			}
+			else if (choice == 5)
+			{
+				cout << "\nExpression Type: " << determineExpressionType(exp);
+			}
+		} while (choice);
 	}
-	catch (const char * s)
+	catch (const char * except)
 	{
-		cout << s;
+		cout << except;
 	}
-	/*cout << "postix Expression: " << post << '\n';
-	cout << "Post To Pre: " << prefixToPostfix(post) << '\n';
-	cout << "prefix: " << infixToPostfix(exp);*/
 	return 0;
+}
+int evaluateExpression(string s)
+{
+	s = infixToPostfix(s);
+	Stack<int> exp{ (int)s.size() };
+	for (int i = 0; i < s.size(); i++)
+	{
+		int result = 0;
+		if (isOperator(s[i]) || isLogicalOp(s[i]))
+		{
+			if (!exp.isEmpty())
+			{
+				int first = exp.pop(), sec = exp.pop();
+				if (s[i] == '+')
+				{
+					exp.push(sec + first);
+				}
+				else if (s[i] == '-')
+				{
+					exp.push(sec - first);
+				}
+				else if (s[i] == '*')
+				{
+					exp.push(sec * first);
+				}
+				else if (s[i] == '/')
+				{
+					if (!first)
+						throw "\nInvalid division i.e by zero";
+					exp.push(sec / first);
+				}
+				else if (s[i] == '^')
+				{
+					exp.push(calcPower(sec, first));
+				}
+				else if (s[i] == '%')
+				{
+					exp.push(sec % first);
+				}
+				else if (s[i] == '&')
+				{
+					if (first != 0 && sec != 0)
+					{
+						exp.push(1);
+					}
+					else
+					{
+						exp.push(0);
+					}
+				}
+				else if (s[i] == '|')
+				{
+					if (first != 0 || sec != 0)
+					{
+						exp.push(1);
+					}
+					else
+					{
+						exp.push(0);
+					}
+				}
+			}
+		}
+		else if (s[i] >= '0' && s[i] <= '9')
+		{
+			int num = 0;
+			while(i < s.length() && s[i] != ',')
+			{
+				num = (num * 10) + (s[i] - '0');
+				i++;
+			}
+			i--;
+			cout << num << ' ';
+			exp.push(num);
+		}
+	}
+	return exp.pop();
+}
+bool isLogicalOp(char op)
+{
+	return (op == '&' || op == '|') ? true : false;
+}
+string determineExpressionType(string exp)
+{
+	int ar, log;
+	ar = log = 0;
+	for (int i = 0; i < exp.length(); i++)
+	{
+		if (isOperator(exp[i]))
+		{
+			ar++;
+		}
+		else if (isLogicalOp(exp[i]))
+		{
+			log++;
+		}
+	}
+	if (ar && log)
+	{
+		return "Mixed";
+	}
+	else if (ar)
+	{
+		return "Arithmetic";
+	}
+	else if (log)
+	{
+		return "Logical";
+	}
 }
 bool validateExpression(string exp, string notation)
 {
 	if (notation == "postfix")
 	{
-		string inf=
+		int count = 0;
+		for (int i = 0; i < exp.length(); i++)
+		{
+			if (isOperand(exp[i]))
+			{
+				count++;
+			}
+			else if (isOperator(exp[i]) || isLogicalOp(exp[i]))
+			{
+				if (count < 2)
+				{
+					return false;
+				}
+				count--;
+			}
+		}
+		return count == 1 ? true : false;
 	}
+	else if (notation == "prefix")
+	{
+		int count=0;
+		for (int i = exp.length(); i >= 0; i--)
+		{
+			if (isOperand(exp[i]))
+			{
+				count++;
+			}
+			else if (isOperator(exp[i]) || isLogicalOp(exp[i]))
+			{
+				if (count < 2)
+				{
+					return false;
+				}
+				count--;
+			}
+		}
+		return (count == 1) ? true : false;
+	}
+	throw "\nWrong Notation";
 }
 string prefixToPostfix(string prefix)
 {
+	if (!validateExpression(prefix, "prefix"));
+	{
+		throw "\nInvalid Expression";
+	}
 	Stack<string> s{ (int)prefix.length() };
 	for (int i = prefix.length() - 1; i >= 0; i--)
 	{
@@ -63,17 +271,22 @@ string prefixToPostfix(string prefix)
 		{
 			s.push(string{ prefix[i] });
 		}
-		else if (isOperator(prefix[i]))
+		else if (isOperator(prefix[i]) || isLogicalOp(prefix[i]))
 		{
 			string first = s.pop(), second = s.pop();
-			s.push(second + prefix[i] + first);
+			s.push("(" + second + prefix[i] + first + ")");
 		}
 	}
-	return infixToPostfix(reverseExpression(s.pop()));
+	string infix = reverseExpression(s.pop());
+	return infixToPostfix(infix);
 }
 
 string postfixToPrefix(string postfix)
 {
+	if (!validateExpression(postfix, "postfix"));
+	{
+		throw "\nInvalid Expression";
+	}
 	Stack<string> s{ (int)postfix.length() };
 	for (int i = 0; i < postfix.length(); i++)
 	{
@@ -81,10 +294,10 @@ string postfixToPrefix(string postfix)
 		{
 			s.push(string{ postfix[i] });
 		}
-		else if (isOperator(postfix[i]))
+		else if (isOperator(postfix[i]) || isLogicalOp(postfix[i]))
 		{
 			string first = s.pop(), second = s.pop();
-			s.push(second + postfix[i] + first);
+			s.push("(" + second + postfix[i] + first + ")");
 		}
 	}
 	return infixToPrefix(s.pop());
@@ -93,6 +306,165 @@ bool isOperand(char op)
 {
 	return ((op >= '0' && op <= '9') || (op >= 'a' && op <= 'z') || (op >= 'A' && op <= 'Z')) ? true : false;
 }
+template<typename T>
+void mySwap(T& a, T& b)
+{
+	T temp = a;
+	a = b;
+	b = temp;
+}
+bool isOperator(char op)
+{
+	return (op == '+' || op == '-' || op == '*' || op == '/' || op == '^' || op == '%') ? true : false;
+}
+int getPrecedence(char op)
+{
+	switch (op)
+	{
+	case '-':
+		return 1;
+	case '+':
+		return 1;
+	case '*':
+		return 2;
+	case '/':
+		return 2;
+	case '%':
+		return 2;
+	case '^':
+		return 3;
+	case '|':
+		return 4;
+	case '&':
+		return 5;
+	default:
+		return 0;
+	}
+}
+string infixToPostfix(string expression)
+{
+	string postfix;
+	Stack<char> stk{ (int)expression.length() };
+	for (int i = 0; i < expression.length(); i++)
+	{
+		if (isOperand(expression[i]))
+		{
+			postfix += expression[i];
+		}
+		else if (expression[i] == '(')
+		{
+			stk.push(expression[i]);
+		}
+		else if (expression[i] == ')')
+		{
+			while (stk.peek() != '(')
+			{
+				postfix += stk.pop();
+			}
+			stk.pop();
+		}
+		else if (isOperator(expression[i]) || isLogicalOp(expression[i]))
+		{
+			if ((!stk.isEmpty() && stk.peek() != '('))
+			{
+				while (!stk.isEmpty() && getPrecedence(stk.peek()) >= getPrecedence(expression[i]))
+				{
+					if (stk.peek() != '(')
+						postfix += stk.pop();
+					else
+						stk.pop();
+				}
+			}
+			stk.push(expression[i]);
+		}
+	}
+	while (!stk.isEmpty())
+	{
+		if (stk.peek() != '(')
+		{
+			postfix += stk.pop();
+		}
+		else
+		{
+			stk.pop();
+		}
+	}
+	return postfix;
+}
+
+string reverseExpression(string expression)
+{
+	int j = expression.length() - 1;
+	for (int i = 0; i < expression.length(); i++)
+	{
+		if (expression[i] == '(')
+		{
+			expression[i] = ')';
+		}
+		else if (expression[i] == ')')
+		{
+			expression[i] = '(';
+		}
+	}
+	for (int i = 0; i <= j; i++)
+	{
+		mySwap(expression[i], expression[j]);
+		j--;
+	}
+	return expression;
+}
+string infixToPrefix(string expression)
+{
+	expression = reverseExpression(expression);
+	string postfix;
+	Stack<char> stk{ (int)expression.length() };
+	for (int i = 0; i < expression.length(); i++)
+	{
+		if (isOperand(expression[i]))
+		{
+			postfix += expression[i];
+		}
+		else if (expression[i] == ')')
+		{
+			while (!stk.isEmpty() && stk.peek() != '(')
+			{
+				postfix += stk.pop();
+			}
+			stk.pop();
+		}
+		else if (expression[i] == '(')
+		{
+			stk.push(expression[i]);
+		}
+		else if (isOperator(expression[i]) || isLogicalOp(expression[i]))
+		{
+			if ((!stk.isEmpty() && stk.peek() != '('))
+			{
+				while (!stk.isEmpty() && getPrecedence(stk.peek()) > getPrecedence(expression[i]))
+				{
+					if (stk.peek() != '(')
+						postfix += stk.pop();
+					else
+						stk.pop();
+				}
+			}
+			stk.push(expression[i]);
+		}
+	}
+	while (!stk.isEmpty())
+	{
+		if (stk.peek() != '(')
+		{
+			postfix += stk.pop();
+		}
+		else
+		{
+			stk.pop();
+		}
+	}
+	return reverseExpression(postfix);
+}
+
 template<typename T>
 Stack<T>::Stack(int cap)
 {
@@ -193,157 +565,12 @@ Stack<T>& Stack<T>::operator = (Stack<int>& ref)
 	}
 	return *this;
 }
-template<typename T>
-void mySwap(T& a, T& b)
+int calcPower(int base, int exp)
 {
-	T temp = a;
-	a = b;
-	b = temp;
-}
-bool isOperator(char op)
-{
-	return (op == '+' || op == '-' || op == '*' || op == '/' || op == '^' || op == '%') ? true : false;
-}
-int getPrecedence(char op)
-{
-	switch (op)
+	int res = 1;
+	while (exp)
 	{
-	case '-':
-		return 1;
-	case '+':
-		return 1;
-	case '*':
-		return 2;
-	case '/':
-		return 2;
-	case '%':
-		return 2;
-	case '^':
-		return 3;
-	default:
-		return 0;
+		res = res * base;
 	}
-}
-string infixToPostfix(string expression)
-{
-	string postfix;
-	Stack<char> stk{ (int)expression.length() };
-	for (int i = 0; i < expression.length(); i++)
-	{
-		if ((expression[i] >= '0' && expression[i] <= '9') || (expression[i] >= 'a' && expression[i] <= 'z'))
-		{
-			postfix += expression[i];
-		}
-		else if (expression[i] == '(')
-		{
-			stk.push(expression[i]);
-		}
-		else if (expression[i] == ')')
-		{
-			while (stk.peek() != '(')
-			{
-				postfix += stk.pop();
-			}
-			stk.pop();
-		}
-		else if (isOperator(expression[i]))
-		{
-			if ((!stk.isEmpty() && stk.peek() != '('))
-			{
-				while (!stk.isEmpty() && getPrecedence(stk.peek()) >= getPrecedence(expression[i]))
-				{
-					if (stk.peek() != '(')
-						postfix += stk.pop();
-					else
-						stk.pop();
-				}
-			}
-			stk.push(expression[i]);
-		}
-	}
-	while (!stk.isEmpty())
-	{
-		if (stk.peek() != '(')
-		{
-			postfix += stk.pop();
-		}
-		else
-		{
-			stk.pop();
-		}
-	}
-	return postfix;
-}
-
-string reverseExpression(string expression)
-{
-	int j = expression.length() - 1;
-	for (int i = 0; i < expression.length(); i++)
-	{
-		if (expression[i] == '(')
-		{
-			expression[i] = ')';
-		}
-		else if (expression[i] == ')')
-		{
-			expression[i] = '(';
-		}
-	}
-	for (int i = 0; i <= j; i++)
-	{
-		mySwap(expression[i], expression[j]);
-		j--;
-	}
-	return expression;
-}
-string infixToPrefix(string expression)
-{
-	expression = reverseExpression(expression);
-	string postfix;
-	Stack<char> stk{ (int)expression.length() };
-	for (int i = 0; i < expression.length(); i++)
-	{
-		if ((expression[i] >= '0' && expression[i] <= '9') || (expression[i] >= 'a' && expression[i] <= 'z'))
-		{
-			postfix += expression[i];
-		}
-		else if (expression[i] == ')')
-		{
-			while (!stk.isEmpty() && stk.peek() != '(')
-			{
-				postfix += stk.pop();
-			}
-			stk.pop();
-		}
-		else if (expression[i] == '(')
-		{
-			stk.push(expression[i]);
-		}
-		else if (isOperator(expression[i]))
-		{
-			if ((!stk.isEmpty() && stk.peek() != '('))
-			{
-				while (!stk.isEmpty() && getPrecedence(stk.peek()) > getPrecedence(expression[i]))
-				{
-					if (stk.peek() != '(')
-						postfix += stk.pop();
-					else
-						stk.pop();
-				}
-			}
-			stk.push(expression[i]);
-		}
-	}
-	while (!stk.isEmpty())
-	{
-		if (stk.peek() != '(')
-		{
-			postfix += stk.pop();
-		}
-		else
-		{
-			stk.pop();
-		}
-	}
-	return reverseExpression(postfix);
+	return res;
 }
