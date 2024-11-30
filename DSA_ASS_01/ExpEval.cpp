@@ -303,7 +303,7 @@ string prefixToPostfix(string prefix)
 		else if (isOperator(prefix[i]) || isLogicalOp(prefix[i]))
 		{
 			string first = s.pop(), second = s.pop();
-			s.push("(" + second + "," + prefix[i] + "," + first + ")");
+			s.push("(" + second + prefix[i] + first + ")");
 		}
 	}
 	string infix = reverseExpression(s.pop());
@@ -333,7 +333,7 @@ string postfixToPrefix(string postfix)
 		else if (isOperator(postfix[i]) || isLogicalOp(postfix[i]))
 		{
 			string first = s.pop(), second = s.pop();
-			s.push("(" + second + "," + postfix[i] + "," + first + ")");
+			s.push("(" + second + postfix[i] + first + ")");
 		}
 	}
 	return infixToPrefix(s.pop());
@@ -391,6 +391,7 @@ string infixToPostfix(string expression)
 				i++;
 			} while (i < expression.length() && isOperand(expression[i]));
 			i--;
+			postfix += ",";
 		}
 		else if (expression[i] == '(')
 		{
@@ -469,6 +470,7 @@ string infixToPrefix(string expression)
 				i++;
 			} while (i < expression.length() && isOperand(expression[i]));
 			i--;
+			prefix += ",";
 		}
 		else if (expression[i] == ')')
 		{

@@ -71,19 +71,9 @@ void WareHouseMS::addDispatchRequest(int shipmentID, int priority)
 }
 int WareHouseMS::processDispatch() 
 {
-	char choice;
-	cout << "\nBased On priority [Y/N]: ";
-	cin >> choice;
-	if (choice == 'Y')
-	{
-		int req = dispatch.getHighestPriorityElement();
-		dispatch.removeHighestPriorityElement();
-		return req;
-	}
-	else
-	{
-		return request.dequeue();
-	}
+	int ship = dispatch.getHighestPriorityElement();
+	dispatch.removeHighestPriorityElement();
+	return ship;
 }
 void WareHouseMS::displaySystemState()
 {
