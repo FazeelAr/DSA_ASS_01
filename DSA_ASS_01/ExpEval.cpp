@@ -15,6 +15,12 @@ bool validateExpression(string expression, string notation);
 // conversion from infx to postfix
 string infixToPostfix(string infix); 
 
+// checks whether the sexpression is prefix 
+bool isPrefix(string exp);
+
+// checks whether the sexpression is postfix 
+bool isPrefix(string exp);
+
 // conversion from infx to prefix
 string infixToPrefix(string infix); 
 
@@ -36,13 +42,9 @@ bool isOperand(char op);
 // calculates the power used for exponential operator "^"
 int calcPower(int base, int exp);
 
-int main()
+int main3()
 {
-	string exp;
-	getline(cin, exp);
-	//exp = infixToPrefix(exp);
-	cout << postfixToPrefix(exp);
-	return 0;
+	//interface to perform different functions on expression based on user's choice
 	int choice; //variable to ask the user for his choice
 	do
 	{
@@ -115,6 +117,57 @@ int main()
 	
 	return 0;
 }
+bool isPrefix(string exp)
+{
+	int operators = 0, operands = 0;
+	for (int i = exp.length(); i >= 0; i--)
+	{
+		if (isOperand(exp[i]))
+		{
+			do
+			{
+				i--;
+			} while (i < exp.length() && isOperand(exp[i]));
+			i++;
+			operands++;
+		}
+		else if (isOperator(exp[i]) || isLogicalOp(exp[i]))
+		{
+			operators++;
+		}
+		if (operators >= operands)
+		{
+			return false;
+		}
+	}
+	return operands == operators + 1;
+}
+
+bool isPostfix(string exp)
+{
+	int operators = 0, operands = 0;
+	for (int i = 0; i < exp.length(); i++)
+	{
+		if (isOperand(exp[i]))
+		{
+			do
+			{
+				i++;
+			} while (i < exp.length() && isOperand(exp[i]));
+			i--;
+			operands++;
+		}
+		else if (isOperator(exp[i]) || isLogicalOp(exp[i]))
+		{
+			operators++;
+		}
+		if (operands <= operators)
+		{
+			return false;
+		}
+	}
+	return operands == operators + 1;
+}
 int evaluateExpression(string s)
 {
 	s = infixToPostfix(s); //converison from infix to postfix  
@@ -152,7 +205,7 @@ int evaluateExpression(string s)
 				else if (s[i] == '%')
 				{
 					if (!first)
-						throw "\nInvalid division i.e by zero";
+						throw "\nInvalid division i.e by zero"; // division by zero exception thrown
 					exp.push(sec % first);
 				}
 				else if (s[i] == '&') //evaluates to true if both the operands are non zero
@@ -226,7 +279,7 @@ string determineExpressionType(string exp)
 		return "Logical";
 	}
 }
-bool validateExpression(string exp, string notation)
+bool validateExpression(string exp, string notation) // validates the expression 
 {
 	if (notation == "postfix")
 	{

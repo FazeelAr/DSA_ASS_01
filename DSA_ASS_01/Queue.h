@@ -173,7 +173,7 @@ template<typename T>
 void Queue<T>::printQueue()
 {
 	cout << '\n';
-	for (int i = front; i < rear; i++)
+	for (int i = front; i <= rear; i++)
 	{
 		cout << data[i] << ' ';
 	}
