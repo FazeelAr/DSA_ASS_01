@@ -36,9 +36,13 @@ bool isOperand(char op);
 // calculates the power used for exponential operator "^"
 int calcPower(int base, int exp);
 
-int main3()
+int main()
 {
-	int choice; //variable to ask the user for its choice
+	/*string exp;
+	getline(cin, exp);
+	cout << "\nPostfix Expression: " << validateExpression(exp,"prefix");
+	return 0;*/
+	int choice; //variable to ask the user for his choice
 	do
 	{
 		try // to catch any exception occured during the execution of the application
@@ -102,9 +106,9 @@ int main3()
 				cout << "\nEvaluated Expression: " << evaluateExpression(exp);
 			}
 		}
-		catch (const char* s)
+		catch (const char* except)
 		{
-			cout << s;
+			cout << except;   //exception caught and displayed
 		}
 	} while (choice);
 	
@@ -113,10 +117,6 @@ int main3()
 int evaluateExpression(string s)
 {
 	s = infixToPostfix(s); //converison from infix to postfix  
-	if (!validateExpression(s, "postfix")) //if the postfix expression is invalid throw an exception of invalid expression
-	{
-		throw "\nInvalid Expression:";
-	}
 	Stack<int> exp{ (int)s.length() }; // A stack to store the operands 
 	for (int i = 0; i < s.length(); i++)
 	{
@@ -234,7 +234,7 @@ bool validateExpression(string exp, string notation)
 		{
 			if (isOperand(exp[i]))
 			{
-				do 
+				do
 				{
 					i++;
 				} while (i < exp.length() && isOperand(exp[i]));
@@ -262,7 +262,7 @@ bool validateExpression(string exp, string notation)
 				do
 				{
 					i--;
-				} while (i >= 0 && isOperand(exp[i]));
+				} while (i < exp.length() && isOperand(exp[i]));
 				i++;
 				count++;
 			}
@@ -277,10 +277,11 @@ bool validateExpression(string exp, string notation)
 		}
 		return (count == 1) ? true : false;
 	}
+	throw "\nExpression Invalid:";
 }
 string prefixToPostfix(string prefix)
 {
-	if (!validateExpression(prefix, "prefix"));
+	if (!validateExpression(prefix, "prefix"))
 	{
 		throw "\nInvalid Expression";
 	}
@@ -303,7 +304,7 @@ string prefixToPostfix(string prefix)
 
 string postfixToPrefix(string postfix)
 {
-	if (!validateExpression(postfix, "postfix"));
+	if (!validateExpression(postfix, "postfix"))
 	{
 		throw "\nInvalid Expression";
 	}
@@ -441,19 +442,24 @@ string reverseExpression(string expression)
 string infixToPrefix(string expression)
 {
 	expression = reverseExpression(expression);
-	string postfix;
+	string prefix;
 	Stack<char> stk{ (int)expression.length() };
 	for (int i = 0; i < expression.length(); i++)
 	{
-		if (isOperand(expression[i]))
+		if (isOperand(expression[i]) || expression[i] == ',')
 		{
-			postfix += expression[i];
+			do
+			{
+				prefix += expression[i];
+				i++;
+			} while (i < expression.length() && isOperand(expression[i]));
+			i--;
 		}
 		else if (expression[i] == ')')
 		{
 			while (!stk.isEmpty() && stk.peek() != '(')
 			{
-				postfix += stk.pop();
+				prefix += stk.pop();
 			}
 			stk.pop();
 		}
@@ -468,7 +474,7 @@ string infixToPrefix(string expression)
 				while (!stk.isEmpty() && getPrecedence(stk.peek()) > getPrecedence(expression[i]))
 				{
 					if (stk.peek() != '(')
-						postfix += stk.pop();
+						prefix += stk.pop();
 					else
 						stk.pop();
 				}
@@ -480,13 +486,13 @@ string infixToPrefix(string expression)
 	{
 		if (stk.peek() != '(')
 		{
-			postfix += stk.pop();
+			prefix += stk.pop();
 		}
 		else
 		{
 			stk.pop();
 		}
 	}
-	return reverseExpression(postfix);
+	return reverseExpression(prefix);
 }
 

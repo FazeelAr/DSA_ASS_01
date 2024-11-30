@@ -146,9 +146,7 @@ T SLList<T>::deleteAtTail()
 			return element;
 		}
 		Node<T>* temp = head, * iter = head;
-		for (; temp->next != tail; temp = temp->next)
-		{
-		}
+		for (; temp->next != tail; temp = temp->next);
 		delete tail;
 		tail = temp;
 		tail->next = nullptr;

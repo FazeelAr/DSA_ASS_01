@@ -1,33 +1,6 @@
 #include"SLList.h"
 #include<chrono>
 using namespace std::chrono;
-void main1()
-{
-	const int N = 100;
-	int arr[N];
-	int i = 0;
-	for (int j = N - 1; j >= 0; j--)
-	{
-		arr[i] = j;
-		i++;
-	}
-	long double sum = 0;
-	for (int i = 0; i < 10; i++)
-	{
-		time_point<high_resolution_clock> start, end;
-		start = high_resolution_clock::now();
-		end = high_resolution_clock::now();
-		cout << endl << fixed << duration_cast<nanoseconds>(end - start).count() << endl;
-		sum = sum + duration_cast<nanoseconds>(end - start).count();
-	}
-
-	//cout << "Average: " << sum / 10 << endl;
-	for (int i = 0; i < N; i++)
-	{
-		cout << arr[i] << ' ';
-	}
-
-}
 template <typename T>
 class BinarySearch
 {
@@ -141,7 +114,7 @@ public:
 		}
 	}
 };
-int main4()
+int main3()
 {
 	BinarySearch<int> bin{};
 	bin.analyzeExecutionTime("list", 1000, 500);

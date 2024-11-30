@@ -16,7 +16,7 @@ ostream& operator<<(ostream& os, const Customer& cs)
 void moveToVIP(Node<Customer>*& head, Node <Customer>*& vipHead);
 void removeLowOrders(Node <Customer>*& head);
 int calculateTotalOrders(Node <Customer>* head);
-int main()
+int main4()
 {
 	SLList<Customer> list{};
 	srand(time(0));
