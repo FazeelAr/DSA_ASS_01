@@ -16,24 +16,22 @@ ostream& operator<<(ostream& os, const Customer& cs)
 void moveToVIP(Node<Customer>*& head, Node <Customer>*& vipHead);
 void removeLowOrders(Node <Customer>*& head);
 int calculateTotalOrders(Node <Customer>* head);
-int main3()
+int main()
 {
 	SLList<Customer> list{};
 	srand(time(0));
 	for (int i = 1; i <= 15; i++)
 	{
-		list.addToTail(Customer{ i,(rand() % 5 + 1) });
+		list.addToTail(Customer{ i,(rand() % 15 + 1) });
 	}
-	SLList<Customer> vipList{};
-	moveToVIP(list.getHead(), vipList.getHead());
-	/*cout << "\nVIP List";
-	vipList.display();*/
 	cout << "\nMain List";
 	list.display();
+	SLList<Customer> vipList{};
+	moveToVIP(list.getHead(), vipList.getHead());
 	removeLowOrders(list.getHead());
-	/*cout << calculateTotalOrders(list.getHead())<<'\n';
-	list.display();*/
-	cout << "\nList after removal";
+	cout << "\nVIP List: ";
+	vipList.display();
+	cout << "\nMain List after removal of low orders and Vip Customers";
 	list.display();
 	return 0;
 }
@@ -68,17 +66,6 @@ void removeLowOrders(Node<Customer>*& head)
 		head = head->next;
 		removeLowOrders(head);
 		delete temp;
-		/*if (head->next != nullptr)
-		{
-			head->data = head->next->data;
-			head->next = head->next->next;
-			removeLowOrders(head);
-			delete temp;
-		}
-		else
-		{
-			head = nullptr;
-		}*/
 	}
 	else
 	{

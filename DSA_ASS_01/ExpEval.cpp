@@ -1,48 +1,47 @@
-#include<iostream>
-#include<string>
-using namespace std;
-template<typename T>
-class Stack
-{
-	T* data;
-	int top;
-	int capacity;
-public:
-	Stack(int cap = 0);
-	~Stack();
-	bool isEmpty()const;
-	bool isFull()const;
-	int size()const;
-	void push(T val);
-	T pop();
-	T peek()const;
-	Stack<T>& operator = (Stack<int>& ref);
-};
-string prefixToPostfix(string prefix);
-string postfixToPrefix(string postfix);
-int evaluateExpression(string expression);
-bool validateExpression(string expression, string notation);
-string infixToPostfix(string infix);
-string infixToPrefix(string infix);
-string determineExpressionType(string expression);
-//(Returns "Arithmetic", "Logical", or "Mixed")
+#include"Stack.h"
+
+//converts the expression from prefix to infix first and then postfix
+string prefixToPostfix(string prefix); 
+
+//converts the expression from postfix to infix first and then prefix 
+string postfixToPrefix(string postfix); 
+
+//evaluates the infix expression but first converts the expression into postfix form ad then evaluates
+int evaluateExpression(string expression); 
+
+//validates the expression depend on its notation
+bool validateExpression(string expression, string notation); 
+
+// conversion from infx to postfix
+string infixToPostfix(string infix); 
+
+// conversion from infx to prefix
+string infixToPrefix(string infix); 
+
+// determines the expression's Type (Returns "Arithmetic", "Logical", or "Mixed")
+string determineExpressionType(string expression); 
+
+//reverse the expression majorly used in conversion from infix to prefix and prefix to infix
 string reverseExpression(string expression);
-long long int conToInt(string s);
+
+// check whether the current charachter of the expresssion is arithmetic operator or not
 bool isOperator(char op);
+
+// check whether the current charachter of the expresssion is logical operator or not
 bool isLogicalOp(char op);
+
+// check whether the current charachter of the expresssion is operand or not (1 to 9 OR a to b OR A to B)
 bool isOperand(char op);
+
+// calculates the power used for exponential operator "^"
 int calcPower(int base, int exp);
-int main()
+
+int main3()
 {
-	
-	try
+	int choice; //variable to ask the user for its choice
+	do
 	{
-		string exp;
-		getline(cin, exp);
-		cout << evaluateExpression(exp);
-		return 0;
-		int choice;
-		do
+		try // to catch any exception occured during the execution of the application
 		{
 			cout << "\n\n\tExpressions: ";
 			cout << "\nEnter 1 to convert from infix to postfix: ";
@@ -51,9 +50,10 @@ int main()
 			cout << "\nEnter 4 to convert from postfix to prefix: ";
 			cout << "\nEnter 5 to check the validity of the expression";
 			cout << "\nEnter 6 to check type of expression: ";
+			cout << "\nEnter 7 to evaluate Expression: ";
 			cout << "\nEnter choice: ";
 			cin >> choice;
-			if (choice <= 0 || choice > 7) 
+			if (choice <= 0 || choice > 7)
 			{
 				break;
 			}
@@ -93,27 +93,36 @@ int main()
 					cout << "\n" << boolalpha << validateExpression(exp, "postfix");
 				}
 			}
-			else if (choice == 5)
+			else if (choice == 6)
 			{
 				cout << "\nExpression Type: " << determineExpressionType(exp);
 			}
-		} while (choice);
-	}
-	catch (const char * except)
-	{
-		cout << except;
-	}
+			else if (choice == 7)
+			{
+				cout << "\nEvaluated Expression: " << evaluateExpression(exp);
+			}
+		}
+		catch (const char* s)
+		{
+			cout << s;
+		}
+	} while (choice);
+	
 	return 0;
 }
 int evaluateExpression(string s)
 {
-	s = infixToPostfix(s);
-	Stack<int> exp{ (int)s.size() };
-	for (int i = 0; i < s.size(); i++)
+	s = infixToPostfix(s); //converison from infix to postfix  
+	if (!validateExpression(s, "postfix")) //if the postfix expression is invalid throw an exception of invalid expression
+	{
+		throw "\nInvalid Expression:";
+	}
+	Stack<int> exp{ (int)s.length() }; // A stack to store the operands 
+	for (int i = 0; i < s.length(); i++)
 	{
 		int result = 0;
-		if (isOperator(s[i]) || isLogicalOp(s[i]))
-		{
+		if (isOperator(s[i]) || isLogicalOp(s[i])) //if the charachter is operator pop the first two charachter from stack
+		{											//and push them back after performing the operation 
 			if (!exp.isEmpty())
 			{
 				int first = exp.pop(), sec = exp.pop();
@@ -141,9 +150,11 @@ int evaluateExpression(string s)
 				}
 				else if (s[i] == '%')
 				{
+					if (!first)
+						throw "\nInvalid division i.e by zero";
 					exp.push(sec % first);
 				}
-				else if (s[i] == '&')
+				else if (s[i] == '&') //evaluates to true if both the operands are non zero
 				{
 					if (first != 0 && sec != 0)
 					{
@@ -154,7 +165,7 @@ int evaluateExpression(string s)
 						exp.push(0);
 					}
 				}
-				else if (s[i] == '|')
+				else if (s[i] == '|') //evaluates to false if any of the operand is non zero
 				{
 					if (first != 0 || sec != 0)
 					{
@@ -167,45 +178,45 @@ int evaluateExpression(string s)
 				}
 			}
 		}
-		else if (s[i] >= '0' && s[i] <= '9')
-		{
+		else if (s[i] >= '0' && s[i] <= '9') // if the charachter is operand extract every digit of the number 
+		{									// from the expression, convert it into a number and push it into the stack
 			int num = 0;
-			while(i < s.length() && s[i] != ',')
+			do
 			{
 				num = (num * 10) + (s[i] - '0');
 				i++;
 			}
+			while (i<s.length()&&isOperand(s[i]));
 			i--;
-			cout << num << ' ';
 			exp.push(num);
 		}
 	}
-	return exp.pop();
+	return exp.pop(); // return the only number left in the stack
 }
-bool isLogicalOp(char op)
+bool isLogicalOp(char op) //
 {
 	return (op == '&' || op == '|') ? true : false;
 }
 string determineExpressionType(string exp)
 {
-	int ar, log;
+	int ar, log; //counters to count logical and arithmetic expression 
 	ar = log = 0;
 	for (int i = 0; i < exp.length(); i++)
 	{
-		if (isOperator(exp[i]))
+		if (isOperator(exp[i])) 
 		{
-			ar++;
+			ar++; // if operator is arithmetic increase the count by one
 		}
 		else if (isLogicalOp(exp[i]))
 		{
-			log++;
+			log++; // if operator is logical increase the count by one
 		}
 	}
-	if (ar && log)
+	if (ar && log) //if both counts are non zero expression is mixed 
 	{
 		return "Mixed";
 	}
-	else if (ar)
+	else if (ar) 
 	{
 		return "Arithmetic";
 	}
@@ -223,6 +234,11 @@ bool validateExpression(string exp, string notation)
 		{
 			if (isOperand(exp[i]))
 			{
+				do 
+				{
+					i++;
+				} while (i < exp.length() && isOperand(exp[i]));
+				i--;
 				count++;
 			}
 			else if (isOperator(exp[i]) || isLogicalOp(exp[i]))
@@ -243,6 +259,11 @@ bool validateExpression(string exp, string notation)
 		{
 			if (isOperand(exp[i]))
 			{
+				do
+				{
+					i--;
+				} while (i >= 0 && isOperand(exp[i]));
+				i++;
 				count++;
 			}
 			else if (isOperator(exp[i]) || isLogicalOp(exp[i]))
@@ -256,7 +277,6 @@ bool validateExpression(string exp, string notation)
 		}
 		return (count == 1) ? true : false;
 	}
-	throw "\nWrong Notation";
 }
 string prefixToPostfix(string prefix)
 {
@@ -347,9 +367,14 @@ string infixToPostfix(string expression)
 	Stack<char> stk{ (int)expression.length() };
 	for (int i = 0; i < expression.length(); i++)
 	{
-		if (isOperand(expression[i]))
+		if (isOperand(expression[i])||expression[i]==',')
 		{
-			postfix += expression[i];
+			do
+			{
+				postfix += expression[i];
+				i++;
+			} while (i < expression.length() && isOperand(expression[i]));
+			i--;
 		}
 		else if (expression[i] == '(')
 		{
@@ -465,112 +490,3 @@ string infixToPrefix(string expression)
 	return reverseExpression(postfix);
 }
 
-template<typename T>
-Stack<T>::Stack(int cap)
-{
-	if (cap <= 0)
-	{
-		data = nullptr;
-		capacity = 0;
-		top = -1;
-		return;
-	}
-	capacity = cap;
-	top = -1;
-	data = new T[capacity];
-}
-template<typename T>
-Stack<T>::~Stack()
-{
-	if (!data)
-	{
-		return;
-	}
-	delete[]data;
-	capacity = 0;
-	top = -1;
-}
-template<typename T>
-bool Stack<T>::isEmpty()const
-{
-	if (top == -1)
-	{
-		return true;
-	}
-	return false;
-}
-template<typename T>
-bool Stack<T>::isFull()const
-{
-	if (top == capacity - 1)
-	{
-		return true;
-	}
-	return false;
-}
-template<typename T>
-int Stack<T>::size()const
-{
-	return capacity;
-}
-template<typename T>
-void Stack<T>::push(T val)
-{
-	if (!isFull())
-	{
-		top++;
-		data[top] = val;
-		return;
-	}
-	throw "\nStack is full:";
-}
-template<typename T>
-T Stack<T>::pop()
-{
-	T val;
-	if (!isEmpty())
-	{
-		val = data[top];
-		top--;
-		return val;
-	}
-	throw "\nStack is empty:";
-}
-template<typename T>
-T Stack<T>::peek()const
-{
-	if (!isEmpty())
-	{
-		return data[top];
-	}
-	throw "\nStack is empty:";
-}
-template<typename T> 
-Stack<T>& Stack<T>::operator = (Stack<int>& ref)
-{
-	if (ref.isEmpty())
-	{
-		return *this;
-	}
-	if (&ref == this)
-	{
-		return *this;
-	}
-	capacity = ref.capacity;
-	data = new T[capacity];
-	top = ref.top();
-	for (int i = 0; i < ref.top; i++)
-	{
-		data[i] = ref.data[i];
-	}
-	return *this;
-}
-int calcPower(int base, int exp)
-{
-	int res = 1;
-	while (exp)
-	{
-		res = res * base;
-	}
-	return res;
-}
