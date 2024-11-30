@@ -18,7 +18,8 @@ public:
 	void push(T val);
 	T pop();
 	T peek()const;
-	Stack<T>& operator = (Stack<int>& ref);
+	void display();
+	void reSize(int size);
 };
 template<typename T>
 Stack<T>::Stack(int cap)
@@ -71,13 +72,13 @@ int Stack<T>::size()const
 template<typename T>
 void Stack<T>::push(T val)
 {
-	if (!isFull())
+	if (isFull())
 	{
-		top++;
-		data[top] = val;
-		return;
+		reSize(capacity + 1);
 	}
-	throw "\nStack is full:";
+	top++;
+	data[top] = val;
+	return;
 }
 template<typename T>
 T Stack<T>::pop()
@@ -101,33 +102,30 @@ T Stack<T>::peek()const
 	throw "\nStack is empty:";
 }
 template<typename T>
-Stack<T>& Stack<T>::operator = (Stack<int>& ref)
+void Stack<T>::reSize(int newSize)
 {
-	if (ref.isEmpty())
+	if (newSize <= 0)
 	{
-		return *this;
+		return;
 	}
-	if (&ref == this)
+	T* temp = new T[newSize];
+	int i = 0;
+	while (i < newSize && i < capacity)
 	{
-		return *this;
+		temp[i] = data[i];
+		i++;
 	}
-	capacity = ref.capacity;
-	data = new T[capacity];
-	top = ref.top();
-	for (int i = 0; i < ref.top; i++)
-	{
-		data[i] = ref.data[i];
-	}
-	return *this;
+	capacity = newSize;
+	delete data;
+	data = temp;
 }
-int calcPower(int base, int exp)
+template<typename T>
+void Stack<T>::display()
 {
-	int res = 1;
-	while (exp)
+	cout << '\n';
+	for (int i = 0; i <= top; i++)
 	{
-		res = res * base;
-		exp--;
+		cout << data[i] << ' ';
 	}
-	return res;
 }
 #endif // !STACK_H

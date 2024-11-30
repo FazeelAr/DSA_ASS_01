@@ -38,10 +38,11 @@ int calcPower(int base, int exp);
 
 int main()
 {
-	/*string exp;
+	string exp;
 	getline(cin, exp);
-	cout << "\nPostfix Expression: " << validateExpression(exp,"prefix");
-	return 0;*/
+	//exp = infixToPrefix(exp);
+	cout << postfixToPrefix(exp);
+	return 0;
 	int choice; //variable to ask the user for his choice
 	do
 	{
@@ -290,12 +291,19 @@ string prefixToPostfix(string prefix)
 	{
 		if (isOperand(prefix[i]))
 		{
-			s.push(string{ prefix[i] });
+			string op;
+			do 
+			{
+				op += (string{ prefix[i] });
+				i--;
+			} while (i >= 0 && isOperand(prefix[i]));
+			i++;
+			s.push(op);
 		}
 		else if (isOperator(prefix[i]) || isLogicalOp(prefix[i]))
 		{
 			string first = s.pop(), second = s.pop();
-			s.push("(" + second + prefix[i] + first + ")");
+			s.push("(" + second + "," + prefix[i] + "," + first + ")");
 		}
 	}
 	string infix = reverseExpression(s.pop());
@@ -313,12 +321,19 @@ string postfixToPrefix(string postfix)
 	{
 		if (isOperand(postfix[i]))
 		{
-			s.push(string{ postfix[i] });
+			string op;
+			do
+			{
+				op += (string{ postfix[i] });
+				i++;
+			} while (i >= 0 && isOperand(postfix[i]));
+			i--;
+			s.push(op);
 		}
 		else if (isOperator(postfix[i]) || isLogicalOp(postfix[i]))
 		{
 			string first = s.pop(), second = s.pop();
-			s.push("(" + second + postfix[i] + first + ")");
+			s.push("(" + second + "," + postfix[i] + "," + first + ")");
 		}
 	}
 	return infixToPrefix(s.pop());
@@ -494,5 +509,15 @@ string infixToPrefix(string expression)
 		}
 	}
 	return reverseExpression(prefix);
+}
+int calcPower(int base, int exp)
+{
+	int res = 1;
+	while (exp)
+	{
+		res = res * base;
+		exp--;
+	}
+	return res;
 }
 
