@@ -12,7 +12,7 @@ public:
 	int processDispatch();
 	void displaySystemState();
 };
-int main3()
+int main()
 { 
 	try
 	{
@@ -84,20 +84,20 @@ void WareHouseMS::displaySystemState()
 	cout << "\n\tSystem State: \n";   
 	if (!shipment.isEmpty()) //if the stack is not empty display it 
 	{
-		cout << "\nShipments: ";
+		cout << "\n\nShipments: ";
 		shipment.display();
 	}
 	if (!request.isEmpty())   //if the queue is not empty display it 
 	{
-		cout << "\nDispatch Requests: ";
+		cout << "\n\nDispatch Requests: ";
 		request.printQueue();
 	}
 	if (!dispatch.isEmpty())    //if the PriorityQueue is not empty display it 
 	{
-		cout << "\nPriority Dispatch Requests: ";
+		cout << "\n\nPriority Dispatch Requests: ";
 		dispatch.display();
 	}
-	else // if all the data structures are empty display stock ended
+	if(shipment.isEmpty()&&request.isEmpty()&&dispatch.isEmpty()) // if all the data structures are empty display stock ended
 	{
 		cout << "\nStock ended";
 	}

@@ -2,6 +2,7 @@
 #define STACK_H
 #include<iostream>
 #include<string>
+#include<iomanip>
 using namespace std;
 template<typename T>
 class Stack
@@ -125,7 +126,7 @@ void Stack<T>::display()
 	cout << '\n';
 	for (int i = 0; i <= top; i++)
 	{
-		cout << data[i] << ' ';
+		cout << setw(3) << left << data[i] << ' ';
 	}
 }
 #endif // !STACK_H

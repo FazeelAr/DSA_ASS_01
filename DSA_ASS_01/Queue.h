@@ -2,6 +2,7 @@
 #define QUEUE_H
 #include<iostream>
 #include<vector>
+#include<iomanip>
 using namespace std;
 template<typename T>
 class Queue
@@ -175,7 +176,7 @@ void Queue<T>::printQueue()
 	cout << '\n';
 	for (int i = front; i <= rear; i++)
 	{
-		cout << data[i] << ' ';
+		cout << setw(3) << left << data[i] << ' ';
 	}
 }
 template<typename T>
@@ -244,10 +245,15 @@ public:
 
 	void display()
 	{
-		cout << '\n';
+		cout << "\nRequests: ";
 		for (int i = 0; i < queue.size(); i++)
 		{
-			cout << queue[i].first << ' ';
+			cout << setw(3) << left << queue[i].first << ' ';
+		}
+		cout << "\nPriority: ";
+		for (int i = 0; i < queue.size(); i++)
+		{
+			cout << setw(3) << left << queue[i].second << ' ';
 		}
 	}
 	

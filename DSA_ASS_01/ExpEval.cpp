@@ -38,7 +38,7 @@ void ExpressionApp();
 //main funtion 
 
 
-int main()
+int main3()
 {			
 	ExpressionApp();   //execution starts 
 	return 0;
