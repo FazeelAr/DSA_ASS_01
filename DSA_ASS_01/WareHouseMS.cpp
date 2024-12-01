@@ -12,31 +12,38 @@ public:
 	int processDispatch();
 	void displaySystemState();
 };
-int main()
+int main3()
 { 
-	WareHouseMS ms; // WMS object created 
-	for (int i = 1; i <= 15; i++) // a loop to unload the shipment and their ID's pushed into the stack
+	try
 	{
-		ms.unloadShipment(i);
+		WareHouseMS ms; // WMS object created 
+		for (int i = 1; i <= 15; i++) // a loop to unload the shipment and their ID's pushed into the stack
+		{
+			ms.unloadShipment(i);
+		}
+		srand(time(0));
+		cout << "\n\tShipment Unloaded";
+		ms.displaySystemState(); // display the system state after the shiment is unloaded 
+		cout << "\n";
+		for (int i = 1; i <= 15; i = i + 3)
+		{
+			ms.addDispatchRequest(i, (rand() % 5) + 1); // a loop to make the dispatch requests and rand function to generate priorities
+		}
+		cout << "\n\tDispatch Requested";
+		ms.displaySystemState(); // state displayed after requests 
+		cout << "\n";
+		for (int i = 0; i < 3; i++)
+		{
+			cout << '\n' << "dispatch processed: " << ms.processDispatch(); // requests processed based on priority
+		}
+		cout << "\n";
+		cout << "\n\tAfter dispatching";  // system state dispalyed after the required shipments are dispatched
+		ms.displaySystemState();
 	}
-	srand(time(0));    
-	cout << "\n\tShipment Unloaded";
-	ms.displaySystemState(); // display the system state after the shiment is unloaded 
-	cout << "\n";
-	for (int i = 1; i <= 15; i = i + 3)
+	catch (...)
 	{
-		ms.addDispatchRequest(i, (rand()%5)+1); // a loop to make the dispatch requests and rand function to generate priorities
+		cout << "\nexception occured";
 	}
-	cout << "\n\tDispatch Requested";
-	ms.displaySystemState(); // state displayed after requests 
-	cout << "\n";
-	for (int i = 0; i < 3; i++)
-	{
-		cout <<'\n' <<"dispatch processed: " << ms.processDispatch(); // requests processed based on priority
-	}
-	cout << "\n";
-	cout << "\n\tAfter dispatching";  // system state dispalyed after the required shipments are dispatched
-	ms.displaySystemState();
 	return 0;
 }
 void WareHouseMS::unloadShipment(int shipmentID)
@@ -50,10 +57,6 @@ void WareHouseMS::addDispatchRequest(int shipmentID, int priority)
 	{
 		temp.push(shipment.pop()); // continue the loop untill the stack is empty or the required shipment is found
 	}  // pop the elements and save them in the temporary stack 
-	while (!temp.isEmpty()) // push the temp stack elements back to the main stack
-	{
-		shipment.push(temp.pop());
-	}
 	if (shipment.peek() == shipmentID) // if the shipment is found enque it
 	{
 		shipment.pop();
@@ -63,6 +66,10 @@ void WareHouseMS::addDispatchRequest(int shipmentID, int priority)
 	else
 	{
 		cout << "\nShipment not found Request cannot be made";
+	}
+	while (!temp.isEmpty()) // push the temp stack elements back to the main stack
+	{
+		shipment.push(temp.pop());
 	}
 }
 int WareHouseMS::processDispatch() 
