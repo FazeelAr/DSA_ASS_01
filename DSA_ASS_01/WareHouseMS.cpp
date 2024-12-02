@@ -76,7 +76,22 @@ int WareHouseMS::processDispatch()
 {
 	int ship = dispatch.getHighestPriorityElement();    // pop the highest priority shipment and return it 
 	dispatch.removeHighestPriorityElement();
-	request.dequeue(); // dequeue the first inserted shipment
+	Queue<int> temp{ request.getSize() };
+	while (!request.isEmpty())     // shift all the elements of the queue in the temporary queue   
+	{
+		if (request.showFront() == ship)   // except the one with the highest priority 
+		{
+			request.dequeue();
+		}
+		else
+		{
+			temp.enqueue(request.dequeue());    
+		}
+	}
+	while (!temp.isEmpty())
+	{
+		request.enqueue(temp.dequeue());   // shift the elements back to the original queue
+	}
 	return ship;
 }
 void WareHouseMS::displaySystemState()
@@ -84,17 +99,12 @@ void WareHouseMS::displaySystemState()
 	cout << "\n\tSystem State: \n";   
 	if (!shipment.isEmpty()) //if the stack is not empty display it 
 	{
-		cout << "\n\nShipments: ";
+		cout << "\n\nShipment ID's: ";
 		shipment.display();
-	}
-	if (!request.isEmpty())   //if the queue is not empty display it 
-	{
-		cout << "\n\nDispatch Requests: ";
-		request.printQueue();
 	}
 	if (!dispatch.isEmpty())    //if the PriorityQueue is not empty display it 
 	{
-		cout << "\n\nPriority Dispatch Requests: ";
+		cout << "\n\nRequests with respect to their priority: ";
 		dispatch.display();
 	}
 	if(shipment.isEmpty()&&request.isEmpty()&&dispatch.isEmpty()) // if all the data structures are empty display stock ended

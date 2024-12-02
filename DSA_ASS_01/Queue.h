@@ -245,7 +245,7 @@ public:
 
 	void display()
 	{
-		cout << "\nRequests: ";
+		cout << setw(9) << "\nID's" << ": ";
 		for (int i = 0; i < queue.size(); i++)
 		{
 			cout << setw(3) << left << queue[i].first << ' ';
