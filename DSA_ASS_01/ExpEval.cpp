@@ -35,10 +35,9 @@ bool isOperand(char op);
 int calcPower(int base, int exp);
 // function that deals with the interface of the applicaction
 void ExpressionApp();
+
 //main funtion 
-
-
-int main3()
+int main()
 {			
 	ExpressionApp();   //execution starts 
 	return 0;
@@ -61,7 +60,7 @@ void ExpressionApp()
 			cout << "\nEnter 7 to evaluate Expression: ";
 			cout << "\nEnter choice: ";
 			cin >> choice;
-			if (choice <= 0 || choice > 7) // if user enters invalid choice close the application
+			if (choice <= 0) // if user enters invalid choice close the application
 			{
 				break;
 			}

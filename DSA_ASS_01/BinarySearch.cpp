@@ -16,21 +16,29 @@ public:
 	bool searchLinkedList(Node<T>* head, T key); 
 	
 	//a function that analyze's the binary search on implemented on linked list and arrays in nanoseconds 
-	void analyzeExecutionTime(string structureType, int inputSize, T key); 
-																	//	
+	void analyzeExecutionTime(string structureType, int inputSize, T key); 	
 };
-int main2()
+
+int main()
 {
 	BinarySearch<int> bin{};
-	bin.analyzeExecutionTime("list", 1000, 500);
+	cout << "\n\tTime analysis of list:";
+	bin.analyzeExecutionTime("list", 100, 11000);
+	bin.analyzeExecutionTime("list", 1000, 1100);
+	bin.analyzeExecutionTime("list", 10000, 1);
+	cout << "\n\tTime analysis of array:";
+	bin.analyzeExecutionTime("array", 100, 11000);
+	bin.analyzeExecutionTime("array", 1000, 100);
+	bin.analyzeExecutionTime("array", 10000, 34);
 	return 0;
 }
+
 template <typename T>
 Node<T>* BinarySearch<T>::getListMid(Node<T>* lb, Node<T>* ub)
 {
 	if (lb == nullptr)
 	{
-		nullptr;
+		return nullptr;
 	}
 	if (lb == ub)
 	{
@@ -111,10 +119,18 @@ void BinarySearch<T>::analyzeExecutionTime(string structureType, int inputSize, 
 		BinarySearch<int> bin{};
 		time_point<high_resolution_clock> start, end;
 		start = high_resolution_clock::now(); // time before noted
-		bin.searchArray(arr, inputSize, key);   // function called
+		bool found = bin.searchArray(arr, inputSize, key);   // function called
 		end = high_resolution_clock::now();    // time after calling the function noted
 		// calculate the difference and print it 
-		cout << endl << fixed << "Time in nanoseconds: " << duration_cast<nanoseconds>(end - start).count() << endl;
+		cout << endl << fixed << "Time in nanoseconds: " << duration_cast<nanoseconds>(end - start).count();
+		if (found)
+		{
+			cout << "\nKey found: \n";
+		}
+		else
+		{
+			cout << "\nNot Found: \n";
+		}
 	}
 	// if the structureType is array create a linked list of input size and initialize it
 	else if (structureType == "list") // perform binary search on that list and provide the 
@@ -127,9 +143,17 @@ void BinarySearch<T>::analyzeExecutionTime(string structureType, int inputSize, 
 		BinarySearch<int> bin{};
 		time_point<high_resolution_clock> start, end;
 		start = high_resolution_clock::now(); // time before noted
-		bin.searchLinkedList(list.getHead(), key); // function called 
+		bool found = bin.searchLinkedList(list.getHead(), key); // function called 
 		end = high_resolution_clock::now(); // time after calling the function noted
 		// calculate the difference and print it 
-		cout << endl << fixed << "Time in nanoseconds: " << duration_cast<nanoseconds>(end - start).count() << endl;
+		cout << endl << fixed << "Time in nanoseconds: " << duration_cast<nanoseconds>(end - start).count();
+		if (found)
+		{
+			cout << "\nKey found: \n";
+		}
+		else
+		{
+			cout << "\nNot Found: \n";
+		}
 	}
 }

@@ -13,7 +13,7 @@ public:
 	void displaySystemState();
 };
 int main()
-{ 
+{
 	try
 	{
 		WareHouseMS ms; // WMS object created 
@@ -97,6 +97,10 @@ int WareHouseMS::processDispatch()
 void WareHouseMS::displaySystemState()
 {
 	cout << "\n\tSystem State: \n";   
+	if(shipment.isEmpty()&&request.isEmpty()&&dispatch.isEmpty()) // if all the data structures are empty display stock ended
+	{
+		cout << "\nStock ended";
+	}
 	if (!shipment.isEmpty()) //if the stack is not empty display it 
 	{
 		cout << "\n\nShipment ID's: ";
@@ -106,9 +110,5 @@ void WareHouseMS::displaySystemState()
 	{
 		cout << "\n\nRequests with respect to their priority: ";
 		dispatch.display();
-	}
-	if(shipment.isEmpty()&&request.isEmpty()&&dispatch.isEmpty()) // if all the data structures are empty display stock ended
-	{
-		cout << "\nStock ended";
 	}
 }

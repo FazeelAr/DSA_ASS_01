@@ -7,7 +7,7 @@ struct Customer // customer ADT to hold customer information
 	int ID;
 	int orderCount;
 	// friend function (ostream operator overloaded) to print the customer's data
-	friend ostream& operator<<(ostream& os,const Customer& cs); 
+	friend ostream& operator<<(ostream& os,const Customer& cs);
 };
 
 ostream& operator<<(ostream& os, const Customer& cs)
@@ -20,7 +20,7 @@ void moveToVIP(Node<Customer>*& head, Node <Customer>*& vipHead);
 void removeLowOrders(Node <Customer>*& head);
 int calculateTotalOrders(Node <Customer>* head);
 
-int main1()
+int main()
 {
 	SLList<Customer> list{}; //SLList object of customer type created 
 	srand(time(0));
@@ -29,13 +29,16 @@ int main1()
 		list.addToTail(Customer{ i,(rand() % 15 + 1) });
 	}
 	cout << "\nMain List";
+	cout << "\nID's   OrderCount";
 	list.display(); //display  the list after adding the nodes
 	SLList<Customer> vipList{};
 	moveToVIP(list.getHead(), vipList.getHead());    //customers with the orders greater than 10 removed from the list and moved to VIP list
 	removeLowOrders(list.getHead());     //customers with the orders less than 3 removed from the list
-	cout << "\nVIP List: ";         
+	cout << "\nVIP List: ";   
+	cout << "\nID's   OrderCount";
 	vipList.display();    
 	cout << "\nMain List after removal of low orders and Vip Customers";
+	cout << "\nID's   OrderCount";
 	list.display();      //display the list after less order removal and vip customer's removal
 	return 0;
 }
